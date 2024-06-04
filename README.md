@@ -15,7 +15,7 @@
 - quemu
 - A [cross compiler](https://wiki.osdev.org/GCC_Cross-Compiler)
 - Cross compiler dependencies: ``make cross-compiler`` to install it
-- export env var present in dev-tools/export
+- export env var present in dev-tools/export ``$(cat dev-tools/export)`` work for example
 
 ### How to use
 

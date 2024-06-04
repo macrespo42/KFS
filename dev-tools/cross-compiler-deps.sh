@@ -22,6 +22,8 @@ function install_cross_compiler_deps() {
   sudo apt install -y texinfo
   echo "Installing libisl-dev..."
   sudo apt install -y libisl-dev
+  echo "Installing xorriso"
+  sudo apt install -y xorriso
 }
 
 function main() {

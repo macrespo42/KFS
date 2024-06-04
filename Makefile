@@ -29,14 +29,13 @@ fclean: clean
 	rm -rf kfs.iso
 
 
-cross-compiler::
+cross-compiler:
 	./dev-tools/cross-compiler-deps.sh	
 
 
 check:
 	./dev-tools/multiboot_check.sh
 
-re:
-	fclean all
+re: fclean all
 
 .PHONY: clean fclean re install cross-compiler check

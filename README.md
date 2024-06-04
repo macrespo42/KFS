@@ -17,7 +17,7 @@
 - Cross compiler dependencies: ``make cross-compiler`` to install it
 - export env var present in dev-tools/export ``$(cat dev-tools/export)`` work for example
 
-For the cross-compiler, We using: ``i686-elf-gcc (GCC) 13.3.1`` and ``binutils-2.42``
+For the cross-compiler, We using: [i686-elf-gcc (GCC) 13.3.1](https://ftp.gnu.org/gnu/gcc/gcc-13.3.0/gcc-13.3.0.tar.xz) and [binutils-2.42](https://ftp.gnu.org/gnu/binutils/binutils-2.42.tar.xz)
 
 ### How to use
 

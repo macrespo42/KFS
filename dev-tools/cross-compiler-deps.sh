@@ -26,9 +26,40 @@ function install_cross_compiler_deps() {
   sudo apt install -y xorriso
 }
 
+
+function install_source_gcc(){
+  wget https://ftp.gnu.org/gnu/gcc/gcc-13.3.0/gcc-13.3.0.tar.xz
+  mkdir -p $HOME/src
+  tar -C $HOME/src -xvf gcc-13.3.0.tar.xz
+  cd $HOME/src
+  mkdir build-gcc
+  cd build-gcc
+  ../gcc-13.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers
+  make -j$(nproc) all-gcc
+  make -j$(nproc) all-target-libgcc
+  make install-gcc
+  make install-target-libgcc
+  
+}
+function install_source_binutils(){
+  wget https://ftp.gnu.org/gnu/binutils/binutils-2.42.tar.xz
+  mkdir -p $HOME/src
+  tar -C $HOME/src -xvf binutils-2.42.tar.xz
+  cd $HOME/src
+  mkdir build-binutils
+  cd build-binutils
+  ../binutils-2.42/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
+  make
+  make install
+  cd $HOME
+
+}
 function main() {
   update_pkgs
-  install_cross_compiler_deps
+ install_cross_compiler_deps
+  install_source_binutils
+  install_source_gcc
+  
 }
 
 main

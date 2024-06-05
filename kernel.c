@@ -99,19 +99,33 @@ void terminal_writestring(const char *data) {
   terminal_write(data, strlen(data));
 }
 
+void bobr(void) {
+  terminal_color = vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK);
+  terminal_writestring("        (\\.---./)        \n");
+  terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+  terminal_writestring("        /.-.-.\\\n");
+  terminal_color = vga_entry_color(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
+  terminal_writestring("       /| 0_0 |\\\n");
+  terminal_color = vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK);
+  terminal_writestring("      |_`-(v)-'_|\n");
+  terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+  terminal_writestring("      \\`-._._.-'/      .-.\n");
+  terminal_color = vga_entry_color(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
+  terminal_writestring("-~-(((.`-\\_|_/-'.)))-~' <_\n");
+  terminal_color = vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK);
+  terminal_writestring("       `.     .'\n");
+  terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+  terminal_writestring("         `._.'\n");
+  terminal_color = vga_entry_color(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
+  terminal_writestring("-----~--~---~~~----~-`.-;~\n");
+  terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+}
+
 void kernel_main(void) {
   /* Initialize terminal interface */
   terminal_initialize();
 
-  terminal_writestring("        (\\.---./)        \n");
-  terminal_writestring("        /.-.-.\\\n");
-  terminal_writestring("       /| 0_0 |\\\n");
-  terminal_writestring("      |_`-(v)-'_|\n");
-  terminal_writestring("      \\`-._._.-'/      .-.\n");
-  terminal_writestring("-~-(((.`-\\_|_/-'.)))-~' <_\n");
-  terminal_writestring("       `.     .'\n");
-  terminal_writestring("         `._.'\n");
-  terminal_writestring("-----~--~---~~~----~-`.-;~\n");
+  bobr();
 
   /* Newline support is left as an exercise. */
   terminal_writestring("Hello 42!\n");

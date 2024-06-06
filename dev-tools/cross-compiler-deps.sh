@@ -31,6 +31,7 @@ function install_source_gcc(){
   wget https://ftp.gnu.org/gnu/gcc/gcc-13.3.0/gcc-13.3.0.tar.xz
   mkdir -p $HOME/src
   tar -C $HOME/src -xvf gcc-13.3.0.tar.xz
+  rm gcc-13.3.0.tar.xz
   cd $HOME/src
   mkdir build-gcc
   cd build-gcc
@@ -45,6 +46,7 @@ function install_source_binutils(){
   wget https://ftp.gnu.org/gnu/binutils/binutils-2.42.tar.xz
   mkdir -p $HOME/src
   tar -C $HOME/src -xvf binutils-2.42.tar.xz
+  rm binutils-2.42.tar.xz
   cd $HOME/src
   mkdir build-binutils
   cd build-binutils

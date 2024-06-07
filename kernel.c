@@ -55,6 +55,7 @@ size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t *terminal_buffer;
+int banner = 0;
 
 void terminal_initialize(void) {
   terminal_row = 0;
@@ -80,7 +81,7 @@ void terminal_putchar(char c) {
   if (c == '\n') {
     ++terminal_row;
     terminal_column = 0;
-    c = '\0';
+    c = banner ? ' ' : '>';
   }
   terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
   if (++terminal_column == VGA_WIDTH) {
@@ -100,6 +101,7 @@ void terminal_writestring(const char *data) {
 }
 
 void bobr(void) {
+  banner = 1;
   terminal_color = vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK);
   terminal_writestring("        (\\.---./)        \n");
   terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
@@ -119,6 +121,7 @@ void bobr(void) {
   terminal_color = vga_entry_color(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
   terminal_writestring("-----~--~---~~~----~-`.-;~\n");
   terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+  banner = 0;
 }
 
 void kernel_main(void) {
@@ -129,4 +132,10 @@ void kernel_main(void) {
 
   /* Newline support is left as an exercise. */
   terminal_writestring("Hello 42!\n");
+
+  for (size_t i = 0; i < VGA_HEIGHT; i++) {
+    terminal_writestring("LOL\n");
+  }
+
+  terminal_writestring("MDR\n");
 }

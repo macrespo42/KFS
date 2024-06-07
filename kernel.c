@@ -78,10 +78,6 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 }
 
 void scroll() {
-  static int call = 0;
-  if (call > 0) {
-    return;
-  }
   for (size_t y = 0; y < VGA_HEIGHT; y++) {
     for (size_t x = 0; x < VGA_WIDTH; x++) {
       const size_t index = y * VGA_WIDTH + x;
@@ -93,24 +89,22 @@ void scroll() {
       terminal_buffer[index] = vga_entry(c, terminal_color);
     }
   }
-  call++;
+  terminal_row = VGA_HEIGHT - 1;
 }
 
 void terminal_putchar(char c) {
   if (c == '\n') {
     ++terminal_row;
     terminal_column = 0;
-    c = banner ? ' ' : '>';
+  } else {
+    terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
   }
-  if (terminal_row == VGA_HEIGHT && terminal_column == 0) {
-    scroll();
-    terminal_row--;
-  }
-  terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-  if (++terminal_column == VGA_WIDTH) {
+  if (terminal_column >= VGA_WIDTH) {
     terminal_column = 0;
-    if (++terminal_row == VGA_HEIGHT)
-      terminal_row = 0;
+    terminal_row++;
+  }
+  if (terminal_row >= VGA_HEIGHT) {
+    scroll();
   }
 }
 
@@ -155,7 +149,7 @@ void bobr(void) {
   terminal_writestring("         `._.'\n");
   terminal_color = vga_entry_color(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
   terminal_writestring("-----~--~---~~~----~-`.-;~\n");
-  terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+  terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
   banner = 0;
 }
 
@@ -163,36 +157,6 @@ void kernel_main(void) {
   /* Initialize terminal interface */
   terminal_initialize();
 
-  // bobr();
-
-  // terminal_writestring("Hello 42!\n");
-  // terminal_writestring("Coucou les copains\n");
-  // terminal_writestring("Je m'appelle macrespo\n");
-  terminal_writestring("a\n");
-  terminal_writestring("b\n");
-  terminal_writestring("c\n");
-  terminal_writestring("d\n");
-  terminal_writestring("e\n");
-  terminal_writestring("f\n");
-  terminal_writestring("g\n");
-  terminal_writestring("h\n");
-  terminal_writestring("i\n");
-  terminal_writestring("j\n");
-  terminal_writestring("k\n");
-  terminal_writestring("l\n");
-  terminal_writestring("m\n");
-  terminal_writestring("n\n");
-  terminal_writestring("o\n");
-  terminal_writestring("p\n");
-  terminal_writestring("q\n");
-  terminal_writestring("r\n");
-  terminal_writestring("s\n");
-  terminal_writestring("t\n");
-  terminal_writestring("u\n");
-  terminal_writestring("v\n");
-  terminal_writestring("w\n");
-  terminal_writestring("x\n");
-  terminal_writestring("y\n");
-  terminal_writestring("z\n");
-  clear();
+  bobr();
+  terminal_writestring("42!\n");
 }

@@ -55,12 +55,13 @@ size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t *terminal_buffer;
-int banner = 0;
+int banner;
 
 void terminal_initialize(void) {
   terminal_row = 0;
   terminal_column = 0;
   terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+  banner = 0;
   terminal_buffer = (uint16_t *)0xB8000;
   for (size_t y = 0; y < VGA_HEIGHT; y++) {
     for (size_t x = 0; x < VGA_WIDTH; x++) {
@@ -99,13 +100,13 @@ void terminal_putchar(char c) {
   } else {
     terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
   }
-  if (terminal_column >= VGA_WIDTH) {
+  if (++terminal_column == VGA_WIDTH) {
     terminal_column = 0;
     terminal_row++;
   }
-  if (terminal_row >= VGA_HEIGHT) {
-    scroll();
-  }
+  // if (++terminal_row == VGA_HEIGHT) {
+  //   terminal_row = 0;
+  // }
 }
 
 void clear(void) {
@@ -117,7 +118,6 @@ void clear(void) {
   }
   terminal_row = 0;
   terminal_column = 0;
-  terminal_putchar('>');
 }
 
 void terminal_write(const char *data, size_t size) {
@@ -156,7 +156,10 @@ void bobr(void) {
 void kernel_main(void) {
   /* Initialize terminal interface */
   terminal_initialize();
+  // Initialize terminal offset
+  terminal_writestring(" ");
 
-  bobr();
-  terminal_writestring("42!\n");
+  // bobr();
+  terminal_writestring("42\n");
+  terminal_writestring("42\n");
 }

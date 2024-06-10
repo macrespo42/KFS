@@ -1,29 +1,47 @@
 #!/bin/bash
 
+COMMAND=""
+
+if command -v pacman &> /dev/null; then
+  echo "Arch based system"
+  COMMAND="sudo pacman -S --noconfirm"
+else
+  echo "apt install based system"
+  COMMAND="sudo apt install -y"
+fi
+
 function update_pkgs () {
-  sudo apt update
-  sudo apt upgrade -y
+  if command -v pacman &> /dev/null; then
+    yes | sudo pacman -Suy
+  else
+    sudo apt update
+    sudo apt upgrade -y
+  fi
 }
 
 function install_cross_compiler_deps() {
+  echo "Installing wget"
+  $COMMAND wget
+  echo "Installing mtools"
+  $COMMAND mtools
   echo "Installing gcc compiler and make..."
-  sudo apt install -y build-essential
+  $COMMAND build-essential
   echo "Installing bison..."
-  sudo apt install -y bison
+  $COMMAND bison
   echo "Installing flex..."
-  sudo apt install -y flex
+  $COMMAND flex
   echo "Installing libgmp3-dev..."
-  sudo apt install -y libgmp3-dev
+  $COMMAND libgmp3-dev
   echo "Installing libmpc-dev..."
-  sudo apt install -y libmpc-dev
+  $COMMAND libmpc-dev
   echo "Installing libmpfr-dev..."
-  sudo apt install -y libmpfr-dev
+  $COMMAND libmpfr-dev
   echo "Installing texinfo..."
-  sudo apt install -y texinfo
+  $COMMAND texinfo
   echo "Installing libisl-dev..."
-  sudo apt install -y libisl-dev
+  $COMMAND libisl-dev
   echo "Installing xorriso"
-  sudo apt install -y xorriso
+  $COMMAND xorriso
 }
 
 
@@ -31,6 +49,7 @@ function install_source_gcc(){
   wget https://ftp.gnu.org/gnu/gcc/gcc-13.3.0/gcc-13.3.0.tar.xz
   mkdir -p $HOME/src
   tar -C $HOME/src -xvf gcc-13.3.0.tar.xz
+  rm gcc-13.3.0.tar.xz
   cd $HOME/src
   mkdir build-gcc
   cd build-gcc
@@ -45,6 +64,7 @@ function install_source_binutils(){
   wget https://ftp.gnu.org/gnu/binutils/binutils-2.42.tar.xz
   mkdir -p $HOME/src
   tar -C $HOME/src -xvf binutils-2.42.tar.xz
+  rm binutils-2.42.tar.xz
   cd $HOME/src
   mkdir build-binutils
   cd build-binutils
@@ -56,10 +76,9 @@ function install_source_binutils(){
 }
 function main() {
   update_pkgs
- install_cross_compiler_deps
+  install_cross_compiler_deps
   install_source_binutils
   install_source_gcc
-  
 }
 
 main

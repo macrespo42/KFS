@@ -55,11 +55,25 @@ size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t *terminal_buffer;
+int banner;
+
+void outb(uint16_t port, uint8_t data) {
+  asm("out %%al, %%dx" : : "a"(data), "d"(port));
+}
+
+void terminal_set_cursor(int x, int y) {
+  uint16_t pos = y * VGA_WIDTH + x + 1;
+  outb(0x3D4, 0x0F);
+  outb(0x3D5, (uint8_t)(pos & 0xFF));
+  outb(0x3D4, 0x0E);
+  outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+}
 
 void terminal_initialize(void) {
   terminal_row = 0;
   terminal_column = 0;
   terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+  banner = 0;
   terminal_buffer = (uint16_t *)0xB8000;
   for (size_t y = 0; y < VGA_HEIGHT; y++) {
     for (size_t x = 0; x < VGA_WIDTH; x++) {
@@ -76,18 +90,48 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
   terminal_buffer[index] = vga_entry(c, color);
 }
 
+void scroll() {
+  for (size_t y = 0; y < VGA_HEIGHT; y++) {
+    for (size_t x = 0; x < VGA_WIDTH; x++) {
+      const size_t index = y * VGA_WIDTH + x;
+      const size_t next_index = (y + 1) * VGA_WIDTH + x;
+      char c = terminal_buffer[next_index];
+      if ((y + 1) == VGA_HEIGHT) {
+        c = '\0';
+      }
+      terminal_buffer[index] = vga_entry(c, terminal_color);
+    }
+  }
+  terminal_row = VGA_HEIGHT - 1;
+}
+
 void terminal_putchar(char c) {
   if (c == '\n') {
     ++terminal_row;
     terminal_column = 0;
-    c = '\0';
+  } else {
+    terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+    terminal_column++;
   }
-  terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-  if (++terminal_column == VGA_WIDTH) {
+
+  if (terminal_column >= VGA_WIDTH) {
     terminal_column = 0;
-    if (++terminal_row == VGA_HEIGHT)
-      terminal_row = 0;
+    terminal_row++;
   }
+  if (terminal_row >= VGA_HEIGHT) {
+    scroll();
+  }
+}
+
+void clear(void) {
+  for (size_t y = 0; y < VGA_HEIGHT; y++) {
+    for (size_t x = 0; x < VGA_WIDTH; x++) {
+      const size_t index = y * VGA_WIDTH + x;
+      terminal_buffer[index] = vga_entry('\0', terminal_color);
+    }
+  }
+  terminal_row = 0;
+  terminal_column = 0;
 }
 
 void terminal_write(const char *data, size_t size) {
@@ -97,11 +141,13 @@ void terminal_write(const char *data, size_t size) {
 
 void terminal_writestring(const char *data) {
   terminal_write(data, strlen(data));
+  terminal_set_cursor(terminal_column - 1, terminal_row);
 }
 
 void bobr(void) {
+  banner = 1;
   terminal_color = vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK);
-  terminal_writestring("        (\\.---./)        \n");
+  terminal_writestring("       (\\.---./)        \n");
   terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
   terminal_writestring("        /.-.-.\\\n");
   terminal_color = vga_entry_color(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
@@ -118,7 +164,8 @@ void bobr(void) {
   terminal_writestring("         `._.'\n");
   terminal_color = vga_entry_color(VGA_COLOR_BLUE, VGA_COLOR_BLACK);
   terminal_writestring("-----~--~---~~~----~-`.-;~\n");
-  terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+  terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+  banner = 0;
 }
 
 void kernel_main(void) {
@@ -127,6 +174,36 @@ void kernel_main(void) {
 
   bobr();
 
-  /* Newline support is left as an exercise. */
-  terminal_writestring("Hello 42!\n");
+  /* Initialize terminal offset */
+  terminal_writestring(" ");
+
+  terminal_writestring("42\n");
+
+  /* Some writing to test scrolling capabilities */
+  terminal_writestring("random 1\n");
+  terminal_writestring("random 2\n");
+  terminal_writestring("random 3\n");
+  terminal_writestring("random 4\n");
+  terminal_writestring("random 5\n");
+  terminal_writestring("random 6\n");
+  terminal_writestring("random 7\n");
+  terminal_writestring("random 8\n");
+  terminal_writestring("random 9\n");
+  terminal_writestring("random 10\n");
+  terminal_writestring("random 11\n");
+  terminal_writestring("random 12\n");
+  terminal_writestring("random 13\n");
+  terminal_writestring("random 14\n");
+  terminal_writestring("random 15\n");
+  terminal_writestring("random 16\n");
+  terminal_writestring("random 17\n");
+  terminal_writestring("random 18\n");
+  terminal_writestring("random 19\n");
+  terminal_writestring("random 20\n");
+  terminal_writestring("random 21\n");
+  terminal_writestring("random 22\n");
+  terminal_writestring("random 23\n");
+  terminal_writestring("random 24\n");
+  terminal_writestring("random 25\n");
+  terminal_writestring("random 26\n");
 }

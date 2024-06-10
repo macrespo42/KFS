@@ -113,3 +113,6 @@ tags
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,visualstudiocode,vim,assembler,c
+
+isodir/boot/kfs.bin
+*.iso

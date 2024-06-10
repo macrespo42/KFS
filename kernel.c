@@ -57,6 +57,18 @@ uint8_t terminal_color;
 uint16_t *terminal_buffer;
 int banner;
 
+void outb(uint16_t port, uint8_t data) {
+  asm("out %%al, %%dx" : : "a"(data), "d"(port));
+}
+
+void terminal_set_cursor(int x, int y) {
+  uint16_t pos = y * VGA_WIDTH + x + 1;
+  outb(0x3D4, 0x0F);
+  outb(0x3D5, (uint8_t)(pos & 0xFF));
+  outb(0x3D4, 0x0E);
+  outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+}
+
 void terminal_initialize(void) {
   terminal_row = 0;
   terminal_column = 0;
@@ -129,6 +141,7 @@ void terminal_write(const char *data, size_t size) {
 
 void terminal_writestring(const char *data) {
   terminal_write(data, strlen(data));
+  terminal_set_cursor(terminal_column - 1, terminal_row);
 }
 
 void bobr(void) {
@@ -153,18 +166,6 @@ void bobr(void) {
   terminal_writestring("-----~--~---~~~----~-`.-;~\n");
   terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
   banner = 0;
-}
-
-void outb(uint16_t port, uint8_t data) {
-  asm("out %%al, %%dx" : : "a"(data), "d"(port));
-}
-
-void terminal_set_cursor(int x, int y) {
-  uint16_t pos = y * VGA_WIDTH + x + 1;
-  outb(0x3D4, 0x0F);
-  outb(0x3D5, (uint8_t)(pos & 0xFF));
-  outb(0x3D4, 0x0E);
-  outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
 }
 
 void kernel_main(void) {
@@ -205,5 +206,4 @@ void kernel_main(void) {
   terminal_writestring("random 24\n");
   terminal_writestring("random 25\n");
   terminal_writestring("random 26\n");
-  terminal_set_cursor(terminal_column, terminal_row);
 }

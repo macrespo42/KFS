@@ -99,14 +99,16 @@ void terminal_putchar(char c) {
     terminal_column = 0;
   } else {
     terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+    terminal_column++;
   }
-  if (++terminal_column == VGA_WIDTH) {
+
+  if (terminal_column >= VGA_WIDTH) {
     terminal_column = 0;
     terminal_row++;
   }
-  // if (++terminal_row == VGA_HEIGHT) {
-  //   terminal_row = 0;
-  // }
+  if (terminal_row >= VGA_HEIGHT) {
+    scroll();
+  }
 }
 
 void clear(void) {
@@ -156,10 +158,35 @@ void bobr(void) {
 void kernel_main(void) {
   /* Initialize terminal interface */
   terminal_initialize();
-  // Initialize terminal offset
-  terminal_writestring(" ");
 
-  // bobr();
+  bobr();
   terminal_writestring("42\n");
-  terminal_writestring("42\n");
+
+  /* Some writing to test scrolling capabilities */
+  // terminal_writestring("random 1\n");
+  // terminal_writestring("random 2\n");
+  // terminal_writestring("random 3\n");
+  // terminal_writestring("random 4\n");
+  // terminal_writestring("random 5\n");
+  // terminal_writestring("random 6\n");
+  // terminal_writestring("random 7\n");
+  // terminal_writestring("random 8\n");
+  // terminal_writestring("random 9\n");
+  // terminal_writestring("random 10\n");
+  // terminal_writestring("random 11\n");
+  // terminal_writestring("random 12\n");
+  // terminal_writestring("random 13\n");
+  // terminal_writestring("random 14\n");
+  // terminal_writestring("random 15\n");
+  // terminal_writestring("random 16\n");
+  // terminal_writestring("random 17\n");
+  // terminal_writestring("random 18\n");
+  // terminal_writestring("random 19\n");
+  // terminal_writestring("random 20\n");
+  // terminal_writestring("random 21\n");
+  // terminal_writestring("random 22\n");
+  // terminal_writestring("random 23\n");
+  // terminal_writestring("random 24\n");
+  // terminal_writestring("random 25\n");
+  // terminal_writestring("random 26\n");
 }

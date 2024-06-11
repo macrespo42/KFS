@@ -34,7 +34,7 @@ fclean: clean
 
 
 cross-compiler:
-	./dev-tools/cross-compiler-deps.sh	
+	./dev-tools/cross-compiler-deps.sh
 
 
 check:

@@ -10,8 +10,10 @@ all: $(NAME)
 
 $(NAME):
 	i686-elf-as boot.s -o boot.o
+	i686-elf-as gdt.s -o gdts.o
 	i686-elf-gcc -c kernel.c -o kernel.o $(CFLAGS)
-	i686-elf-gcc -T linker.ld -o kfs.bin $(LDFLAGS) boot.o kernel.o -lgcc
+	i686-elf-gcc -c gdt.c -o gdt.o $(CFLAGS)
+	i686-elf-gcc -T linker.ld -o kfs.bin $(LDFLAGS) boot.o kernel.o gdt.o gdts.o  -lgcc
 	mv kfs.bin isodir/boot/kfs.bin
 	grub-mkrescue -o $(NAME) isodir
 

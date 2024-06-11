@@ -168,42 +168,52 @@ void bobr(void) {
   banner = 0;
 }
 
+char *intToChar(int number) {
+    int tmp = number;
+    int numDigits = 0;
+    while (tmp != 0) {
+        tmp /= 10;
+        numDigits++;
+    }
+    char str[numDigits];
+        for (int i = numDigits - 1; i >= 0; i--) {
+        str[i] = '0' + (number % 10);
+        number /= 10;
+    }
+    str[numDigits] = '\0';
+    return str;
+ //   terminal_writestring(str);
+  // terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+}
+
+void print_stack() {
+    void *stack_top;
+    char *test = "cc";
+    __asm__ volatile (
+        "mov %%esp, %0"  
+        : "=r" (stack_top)
+    );
+        for (void **ptr = stack_top; ptr < (void**)test; ptr++) {
+            terminal_writestring(ptr);
+   terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+    }
+
+
+
+}
+
+
+
+
+
 void kernel_main(void) {
   /* Initialize terminal interface */
   terminal_initialize();
+  initGdt();
+intToChar(145);
+print_stack();
 
-  bobr();
 
   /* Initialize terminal offset */
-  terminal_writestring(" ");
 
-  terminal_writestring("42\n");
-
-  /* Some writing to test scrolling capabilities */
-  terminal_writestring("random 1\n");
-  terminal_writestring("random 2\n");
-  terminal_writestring("random 3\n");
-  terminal_writestring("random 4\n");
-  terminal_writestring("random 5\n");
-  terminal_writestring("random 6\n");
-  terminal_writestring("random 7\n");
-  terminal_writestring("random 8\n");
-  terminal_writestring("random 9\n");
-  terminal_writestring("random 10\n");
-  terminal_writestring("random 11\n");
-  terminal_writestring("random 12\n");
-  terminal_writestring("random 13\n");
-  terminal_writestring("random 14\n");
-  terminal_writestring("random 15\n");
-  terminal_writestring("random 16\n");
-  terminal_writestring("random 17\n");
-  terminal_writestring("random 18\n");
-  terminal_writestring("random 19\n");
-  terminal_writestring("random 20\n");
-  terminal_writestring("random 21\n");
-  terminal_writestring("random 22\n");
-  terminal_writestring("random 23\n");
-  terminal_writestring("random 24\n");
-  terminal_writestring("random 25\n");
-  terminal_writestring("random 26\n");
 }

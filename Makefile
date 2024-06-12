@@ -4,7 +4,7 @@ LDFLAGS = -ffreestanding -O2 -nostdlib
 
 CC = i686-elf-gcc
 
-KERNEL_SRC = kernel tty
+KERNEL_SRC = kernel tty libk
 
 NAME = kfs.iso
 
@@ -23,23 +23,18 @@ $(NAME): $(OBJ)
 %.o: %.c
 	${CC} ${CFLAGS} -c $< -o $@
 
-
 install:
 	qemu-system-i386 -cdrom $(NAME)
 
-
 clean:
 	rm -rf boot.o $(OBJ)
-
 
 fclean: clean
 	rm -rf isodir/boot/kfs.bin
 	rm -rf kfs.iso
 
-
 cross-compiler:
 	./dev-tools/cross-compiler-deps.sh	
-
 
 check:
 	./dev-tools/multiboot_check.sh

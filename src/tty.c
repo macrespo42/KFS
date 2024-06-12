@@ -1,12 +1,6 @@
-#include "vga.h"
 #include "tty.h"
-
-size_t strlen(const char *str) {
-  size_t len = 0;
-  while (str[len])
-    len++;
-  return len;
-}
+#include "libk.h"
+#include "vga.h"
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;

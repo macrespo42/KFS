@@ -2,19 +2,22 @@
 
 extern void gdt_flush(addr_t);
 
-struct gdt_entry_struct gdt_entries[5];
+struct gdt_entry_struct gdt_entries[7];
 struct gdt_ptr_struct gdt_ptr;
 
 
 void initGdt(void){
-    gdt_ptr.limit = (sizeof(struct gdt_entry_struct) * 5) - 1;
+    gdt_ptr.limit = (sizeof(struct gdt_entry_struct) * 7) - 1;
     gdt_ptr.base = &gdt_entries;
 
     setGdtGate(0,0,0,0,0);
+  //  setGdtGate(1,0, 0xFFFFFFFF, 0x92, 0xCF  ); // kernel codey dont zork becquse he doesnt hqve the right code 
     setGdtGate(1,0, 0xFFFFFFFF, 0x9A, 0xCF  ); // kernel codey
-    setGdtGate(2,0, 0xFFFFFFFF, 0x92, 0xCF  ); // kernel dqtq
+    setGdtGate(1,0, 0xFFFFFFFF, 0x9A, 0xCF  ); // kernel data
+    setGdtGate(2,0, 0xFFFFFFFF, 0x96, 0xCF  ); // kernel stack
     setGdtGate(3,0, 0xFFFFFFFF, 0xFA, 0xCF  ); // user code
     setGdtGate(4,0, 0xFFFFFFFF, 0xF2, 0xCF  ); // user dqtq
+    setGdtGate(4,0, 0xFFFFFFFF, 0xF6, 0xCF  ); // user stack
     gdt_flush(&gdt_ptr);
 
 }

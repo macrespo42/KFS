@@ -168,7 +168,15 @@ void bobr(void) {
   banner = 0;
 }
 
-char *intToChar(int number) {
+void println(void){
+    terminal_writestring("\n");
+    terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+}
+void print_str(char * str){
+      terminal_writestring(str);
+    terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+}
+void  print_int(int number) {
     int tmp = number;
     int numDigits = 0;
     while (tmp != 0) {
@@ -181,25 +189,76 @@ char *intToChar(int number) {
         number /= 10;
     }
     str[numDigits] = '\0';
-    return str;
- //   terminal_writestring(str);
-  // terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+    print_str(str);
+}
+
+int			get_len_hex(unsigned long long n, unsigned int len)
+{
+	unsigned long long i;
+
+	i = 0;
+	if (n == 0)
+		return (1);
+	while (n)
+	{
+		n /= len;
+		i++;
+	}
+	return (i);
+}
+
+int			ft_convert_base(unsigned long long n, unsigned long long i, char *base)
+{
+	if (n == 0)
+		return (base[0 % strlen(base)]);
+	while (i > 1)
+	{
+		n /= strlen(base);
+		i--;
+	}
+	return (base[n % strlen(base)]);
+}
+
+void print_pointer(unsigned long long n){
+	int					i;
+	unsigned int		len;
+	unsigned long long	len_hex;
+ char *base = "0123456789abcdef";
+  char *start_pointer = "0x";
+
+	i = 0;
+	len = strlen(base);
+
+	len_hex = (get_len_hex(n, len));
+	char				fi[len_hex + 3];
+  for (int i = 0; i < 2 ; i++){
+    fi[i] = start_pointer[i];
+  }
+  i = 2;
+	while ((len_hex)){
+
+		fi[i] = ft_convert_base(n, len_hex, base);
+    i++;
+    len_hex--;
+
+	  fi[i] = '\0';
+  }
+    terminal_writestring(fi);
+  terminal_color = vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK);
 }
 
 void print_stack() {
-    void *stack_top;
-    char *test = "cc";
+    void *stack_bottom;
+    int test = 42;
     __asm__ volatile (
-        "mov %%esp, %0"  
-        : "=r" (stack_top)
+        "mov %%ebp, %0"  
+        : "=r" (stack_bottom)
     );
-        for (void **ptr = stack_top; ptr < (void**)test; ptr++) {
-            terminal_writestring(ptr);
-   terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+        for (void *ptr = &test; ptr <= (void*)stack_bottom; ptr++) {
+            print_pointer(ptr);
+            print_int(*(int *)ptr);
+            println();
     }
-
-
-
 }
 
 
@@ -210,7 +269,6 @@ void kernel_main(void) {
   /* Initialize terminal interface */
   terminal_initialize();
   initGdt();
-intToChar(145);
 print_stack();
 
 

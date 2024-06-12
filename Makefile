@@ -1,19 +1,27 @@
-CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -Wall -Wextra -std=gnu99
+CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -Wall -Wextra -std=gnu99 -I includes/
 
 LDFLAGS = -ffreestanding -O2 -nostdlib
 
 CC = i686-elf-gcc
 
+KERNEL_SRC = kernel tty
+
 NAME = kfs.iso
+
+SRC = $(addsuffix .c, $(addprefix src/, $(KERNEL_SRC)))
+
+OBJ = $(SRC:c=o)
 
 all: $(NAME)
 
-$(NAME):
+$(NAME): $(OBJ)
 	i686-elf-as boot.s -o boot.o
-	i686-elf-gcc -c kernel.c -o kernel.o $(CFLAGS)
-	i686-elf-gcc -T linker.ld -o kfs.bin $(LDFLAGS) boot.o kernel.o -lgcc
+	$(CC) -T linker.ld -o kfs.bin $(LDFLAGS) boot.o $(OBJ) -lgcc
 	mv kfs.bin isodir/boot/kfs.bin
 	grub-mkrescue -o $(NAME) isodir
+
+%.o: %.c
+	${CC} ${CFLAGS} -c $< -o $@
 
 
 install:
@@ -21,7 +29,7 @@ install:
 
 
 clean:
-	rm -rf boot.o kernel.o
+	rm -rf boot.o $(OBJ)
 
 
 fclean: clean

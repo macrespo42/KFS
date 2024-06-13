@@ -1,39 +1,41 @@
-CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -Wall -Wextra -std=gnu99
+CFLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -ffreestanding -O2 -Wall -Wextra -std=gnu99 -I includes/
 
 LDFLAGS = -ffreestanding -O2 -nostdlib
 
 CC = i686-elf-gcc
 
+KERNEL_SRC = kernel tty libk gdt
+
 NAME = kfs.iso
+
+SRC = $(addsuffix .c, $(addprefix src/, $(KERNEL_SRC)))
+
+OBJ = $(SRC:c=o)
 
 all: $(NAME)
 
-$(NAME):
+$(NAME): $(OBJ)
 	i686-elf-as boot.s -o boot.o
 	i686-elf-as gdt.s -o gdts.o
-	i686-elf-gcc -c kernel.c -o kernel.o $(CFLAGS)
-	i686-elf-gcc -c gdt.c -o gdt.o $(CFLAGS)
-	i686-elf-gcc -T linker.ld -o kfs.bin $(LDFLAGS) boot.o kernel.o gdt.o gdts.o  -lgcc
+	$(CC) -T linker.ld -o kfs.bin $(LDFLAGS) boot.o gdts.o $(OBJ) -lgcc
 	mv kfs.bin isodir/boot/kfs.bin
 	grub-mkrescue -o $(NAME) isodir
 
+%.o: %.c
+	${CC} ${CFLAGS} -c $< -o $@
 
 install:
 	qemu-system-i386 -cdrom $(NAME)
 
-
 clean:
-	rm -rf boot.o kernel.o
-
+	rm -rf boot.o $(OBJ)
 
 fclean: clean
 	rm -rf isodir/boot/kfs.bin
 	rm -rf kfs.iso
 
-
 cross-compiler:
 	./dev-tools/cross-compiler-deps.sh	
-
 
 check:
 	./dev-tools/multiboot_check.sh

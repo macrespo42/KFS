@@ -1,4 +1,5 @@
 #include "libk.h"
+#include "tty.h"
 
 size_t strlen(const char *str) {
   size_t len = 0;
@@ -76,6 +77,12 @@ int ft_strncmp(const char *s1, const char *s2, size_t n) {
   }
   return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
+void  println(void){
+  terminal_writestring("\n");
+}
+void  print_str(char * str){
+  terminal_writestring(str);
+}
 
 
 void print_stack() {
@@ -87,7 +94,7 @@ void print_stack() {
     );
         for (void *ptr = &test; ptr <= (void*)stack_bottom; ptr++) {
             print_pointer(ptr);
-            print_str("  ")
+            print_str("  ");
             print_int(*(int *)ptr);
             println();
     }
@@ -160,5 +167,4 @@ void print_pointer(unsigned long long n){
 	  fi[i] = '\0';
   }
     terminal_writestring(fi);
-  terminal_color = vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK);
 }

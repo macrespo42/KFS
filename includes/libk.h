@@ -13,4 +13,6 @@ void print_pointer(unsigned long long n);
 int ft_convert_base(unsigned long long n, unsigned long long i, char *base);
 int			ft_convert_base(unsigned long long n, unsigned long long i, char *base);
 void  print_int(int number);
+void println(void);
+void  print_str(char * str);
 #endif

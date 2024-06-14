@@ -4,7 +4,7 @@ LDFLAGS = -ffreestanding -O2 -nostdlib
 
 CC = i686-elf-gcc
 
-KERNEL_SRC = kernel tty libk
+KERNEL_SRC = kernel tty libk gdt
 
 NAME = kfs.iso
 
@@ -16,7 +16,8 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	i686-elf-as boot.s -o boot.o
-	$(CC) -T linker.ld -o kfs.bin $(LDFLAGS) boot.o $(OBJ) -lgcc
+	i686-elf-as gdt.s -o gdts.o
+	$(CC) -T linker.ld -o kfs.bin $(LDFLAGS) boot.o gdts.o $(OBJ) -lgcc
 	mv kfs.bin isodir/boot/kfs.bin
 	grub-mkrescue -o $(NAME) isodir
 
@@ -27,7 +28,7 @@ install:
 	qemu-system-i386 -cdrom $(NAME)
 
 clean:
-	rm -rf boot.o $(OBJ)
+	rm -rf boot.o gdts.o $(OBJ)
 
 fclean: clean
 	rm -rf isodir/boot/kfs.bin

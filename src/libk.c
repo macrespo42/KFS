@@ -1,4 +1,5 @@
 #include "libk.h"
+#include "tty.h"
 
 size_t strlen(const char *str) {
   size_t len = 0;
@@ -75,4 +76,84 @@ int ft_strncmp(const char *s1, const char *s2, size_t n) {
     i++;
   }
   return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+void println(void) { terminal_writestring("\n"); }
+void print_str(char *str) { terminal_writestring(str); }
+
+void print_stack() {
+  void *stack_bottom;
+  int test = 42;
+  __asm__ volatile("mov %%ebp, %0" : "=r"(stack_bottom));
+  for (void *ptr = &test; ptr <= (void *)stack_bottom; ptr++) {
+    print_pointer((int)ptr);
+    print_str("  ");
+    print_int(*(int *)ptr);
+    println();
+  }
+}
+
+void print_int(int number) {
+  int tmp = number;
+  int numDigits = 0;
+  while (tmp != 0) {
+    tmp /= 10;
+    numDigits++;
+  }
+  char str[numDigits];
+  for (int i = numDigits - 1; i >= 0; i--) {
+    str[i] = '0' + (number % 10);
+    number /= 10;
+  }
+  str[numDigits] = '\0';
+  print_str(str);
+}
+
+int get_len_hex(int n, unsigned int len) {
+  int i;
+
+  i = 0;
+  if (n == 0)
+    return (1);
+  while (n) {
+    n /= len;
+    i++;
+  }
+  return (i);
+}
+
+int ft_convert_base(int n, int i, char *base) {
+  if (n == 0)
+    return (base[0 % strlen(base)]);
+  while (i > 1) {
+    n /= strlen(base);
+    i--;
+  }
+  return (base[n % strlen(base)]);
+}
+
+void print_pointer(int n) {
+  int i;
+  unsigned int len;
+  int len_hex;
+  char *base = "0123456789abcdef";
+  char *start_pointer = "0x";
+
+  i = 0;
+  len = strlen(base);
+
+  len_hex = (get_len_hex(n, len));
+  char fi[len_hex + 3];
+  for (int i = 0; i < 2; i++) {
+    fi[i] = start_pointer[i];
+  }
+  i = 2;
+  while ((len_hex)) {
+
+    fi[i] = ft_convert_base(n, len_hex, base);
+    i++;
+    len_hex--;
+
+    fi[i] = '\0';
+  }
+  terminal_writestring(fi);
 }

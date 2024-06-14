@@ -1,3 +1,5 @@
+#include "gdt.h"
+#include "libk.h"
 #include "tty.h"
 
 void kernel_main(void) {
@@ -38,4 +40,7 @@ void kernel_main(void) {
   // terminal_writestring("random 24\n");
   // terminal_writestring("random 25\n");
   // terminal_writestring("random 26\n");
+  println();
+  initGdt();
+  print_stack();
 }

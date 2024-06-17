@@ -24,6 +24,18 @@ void *ft_memccpy(void *dst, const void *src, int c, size_t n) {
   }
   return (NULL);
 }
+void *memcpy(void *dst, const void *src, size_t n) {
+    unsigned char *dst_cp = (unsigned char *)dst;
+    const unsigned char *src_cp = (const unsigned char *)src;
+
+    size_t i;
+    for (i = 0; i < n; ++i) {
+        dst_cp[i] = src_cp[i];
+    }
+
+    return dst;
+}
+
 
 void *ft_memmove(void *dst, const void *src, size_t len) {
   size_t i;
@@ -80,16 +92,29 @@ int ft_strncmp(const char *s1, const char *s2, size_t n) {
 void println(void) { terminal_writestring("\n"); }
 void print_str(char *str) { terminal_writestring(str); }
 
+
 void print_stack() {
   void *stack_bottom;
+  void *stack_top;
   int test = 42;
+  int max_frame_seen = 10;
+  int index =0;
   __asm__ volatile("mov %%ebp, %0" : "=r"(stack_bottom));
+    __asm__ volatile("mov %%esp, %0" : "=r"(stack_top));
   for (void *ptr = &test; ptr <= (void *)stack_bottom; ptr++) {
-    print_pointer((int)ptr);
-    print_str("  ");
+    if(index > max_frame_seen){
+      return ;
+    }
+  print_pointer((unsigned long int)ptr);
+    print_str("    ");
     print_int(*(int *)ptr);
     println();
+    index++;
   }
+  print_str("Address of the stack bottom");
+  print_pointer((unsigned int)stack_bottom);
+    print_str("Address of the stack top");
+  print_pointer((unsigned int)stack_top);
 }
 
 void print_int(int number) {
@@ -108,7 +133,7 @@ void print_int(int number) {
   print_str(str);
 }
 
-int get_len_hex(int n, unsigned int len) {
+int get_len_hex(unsigned int n, unsigned int len) {
   int i;
 
   i = 0;
@@ -121,7 +146,7 @@ int get_len_hex(int n, unsigned int len) {
   return (i);
 }
 
-int ft_convert_base(int n, int i, char *base) {
+int ft_convert_base(unsigned int n, int i, char *base) {
   if (n == 0)
     return (base[0 % strlen(base)]);
   while (i > 1) {
@@ -131,7 +156,7 @@ int ft_convert_base(int n, int i, char *base) {
   return (base[n % strlen(base)]);
 }
 
-void print_pointer(int n) {
+void print_pointer(unsigned int n) {
   int i;
   unsigned int len;
   int len_hex;

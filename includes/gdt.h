@@ -1,4 +1,5 @@
 #include "stdint.h"
+#define GDT_ADDRESS 0x00000800
 
 struct gdt_entry_struct {
   uint16_t limit;
@@ -11,9 +12,9 @@ struct gdt_entry_struct {
 
 struct gdt_ptr_struct {
   uint16_t limit;
-  void *base;
+  void * base;
 } __attribute__((packed));
 
 void initGdt(void);
-void setGdtGate(uint32_t num, uint64_t base, uint32_t limit, uint8_t access,
+void setGdtGate(uint32_t num, uint32_t base, uint32_t limit, uint8_t access,
                 uint8_t gran);

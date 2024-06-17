@@ -95,12 +95,10 @@ void print_str(char *str) { terminal_writestring(str); }
 
 void print_stack() {
   void *stack_bottom;
-  void *stack_top;
   int test = 42;
   int max_frame_seen = 10;
   int index =0;
   __asm__ volatile("mov %%ebp, %0" : "=r"(stack_bottom));
-    __asm__ volatile("mov %%esp, %0" : "=r"(stack_top));
   for (void *ptr = &test; ptr <= (void *)stack_bottom; ptr++) {
     if(index > max_frame_seen){
       return ;
@@ -111,10 +109,11 @@ void print_stack() {
     println();
     index++;
   }
-  print_str("Address of the stack bottom");
+  println();
+
+  print_str("Address of the stack bottom  ");
   print_pointer((unsigned int)stack_bottom);
-    print_str("Address of the stack top");
-  print_pointer((unsigned int)stack_top);
+  println();
 }
 
 void print_int(int number) {
@@ -173,7 +172,7 @@ void print_pointer(unsigned int n) {
   }
   i = 2;
   while ((len_hex)) {
-
+    
     fi[i] = ft_convert_base(n, len_hex, base);
     i++;
     len_hex--;
